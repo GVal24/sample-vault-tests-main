@@ -67,12 +67,13 @@ testUtils.createTestButton("Test Login - Error en la ruta del Método HTTP", asy
         localStorage.setItem('test_token', data.token);
         testUtils.setSuccess(btn);
     }
+});
 
 testUtils.createTestButton("Test Registro - Usuario Nuevo", async (btn) => {
     const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'nuevo1' + Date.now(), password: '12345' }) // Usamos pepe hardcodeado
+        body: JSON.stringify({ username: 'nuevo ' + Date.now(), password: '12345' }) // Creación de usuario nuevo
     });
     
     const data = await response.json();
@@ -84,3 +85,25 @@ testUtils.createTestButton("Test Registro - Usuario Nuevo", async (btn) => {
         testUtils.setSuccess(btn);
     }
 });
+
+testUtils.createTestButton("Test Seguridad - Productor accediendo a Admin", async (btn) => {
+       const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ okLogin() }) // Usamos a pepe nuevamente
+    });
+    
+    const data = await response.json();
+    testUtils.log(data)
+ 
+      const response = await fetch('/api/admin/users', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+ 
+    if (response.status === 403) {
+        localStorage.setItem('test_token', data.token);
+        testUtils.setSuccess(btn);
+    }
+});
+
+
