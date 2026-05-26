@@ -87,23 +87,7 @@ testUtils.createTestButton("Test Registro - Usuario Nuevo", async (btn) => {
 });
 
 testUtils.createTestButton("Test Seguridad - Productor accediendo a Admin", async (btn) => {
-       const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ okLogin() }) // Usamos a pepe nuevamente
-    });
-    
-    const data = await response.json();
-    testUtils.log(data)
- 
-      const response = await fetch('/api/admin/users', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
- 
-    if (response.status === 403) {
-        localStorage.setItem('test_token', data.token);
-        testUtils.setSuccess(btn);
-    }
+// En proceso...
 });
 
 
