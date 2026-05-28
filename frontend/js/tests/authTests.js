@@ -87,28 +87,43 @@ testUtils.createTestButton("Test Registro - Usuario Nuevo", async (btn) => {
 });
 
 testUtils.createTestButton("Test Seguridad - Productor accediendo a Admin", async (btn) => {
- async okLogin(){
-    // Login como productor 
+    async function okLogin() {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: 'pepe', password: '12345' })
         });
-        const data = await response.json();
-        // Guardamos el token
-        localStorage.setItem('test_token', data.token);
-    }    
 
-    //Intento de hacer un GET
-        const response = await fetch('/api/admin/users', {
-            method: 'GET', 
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-    
-        if (response.status === 403) {
-            localStorage.setItem('test_token', data.token);
-            testUtils.setSuccess(btn);
+        const data = await response.json();
+        testUtils.log(data);
+
+        if (!response.ok || !data.token) {
+            return null;
         }
+
+        localStorage.setItem('test_token', data.token);
+        return data.token;
+    }
+
+    const token = await okLogin();
+    if (!token) {
+        return;
+    }
+
+    const response = await fetch('/api/admin/users', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    const data = await response.json();
+    testUtils.log(data);
+
+    if (response.status === 403) {
+        testUtils.setSuccess(btn);
+    }
 });
 
 
